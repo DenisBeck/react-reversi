@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 
 import Aux from '../Auxx/Auxx';
+import GamePlay from '../../containers/GamePlay/GamePlay';
+
+import classes from './Layout.css';
 
 class Layout extends Component {
     render() {
@@ -8,8 +11,8 @@ class Layout extends Component {
             <Aux>
                 <div>Toolbar</div>
                 <div>SideDrawer</div>
-                <main>
-                    <h1>Основная страница</h1>
+                <main className={classes.Content}>
+                    <GamePlay />
                 </main>
             </Aux>
         );

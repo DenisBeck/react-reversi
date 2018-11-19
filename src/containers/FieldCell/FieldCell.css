@@ -1,0 +1,20 @@
+.FieldCell {
+    color: #ffffff;
+    background-color: #0f3317;
+    width: 12.5%;
+    height: 12.5%;
+    box-sizing: border-box;
+    border: 1px solid #ffffff;
+    border-radius: 10%;
+    display: inline-block;
+    margin-bottom: -6px;
+    cursor: pointer;
+}
+
+.FieldCell:hover {
+    background-color: #1b5913;
+}
+
+.FieldCell h1 {
+    margin: 0;
+}

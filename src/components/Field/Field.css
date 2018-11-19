@@ -1,0 +1,29 @@
+.Wrapper {
+    display: flex;
+    margin: 20px auto;
+    width: 50%;
+    position: relative;
+}
+
+.Wrapper:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.Field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border: 1px solid #0f3317;
+    padding: 5px;
+}
+
+@media (max-width: 600px) {
+    .Wrapper {
+        width: 90%;
+    }
+    
+}
