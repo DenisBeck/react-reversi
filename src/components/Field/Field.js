@@ -10,7 +10,8 @@ const field = (props) => (
                 <FieldCell 
                     key={"" + cell.row + cell.column} 
                     row={cell.row}
-                    column={cell.column} />
+                    column={cell.column}
+                    chipColor={props.chipColor} />
             ))}
             
         </div>

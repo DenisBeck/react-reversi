@@ -2,3 +2,9 @@
   text-align: center;
   font-size: 1.5em;
 }
+
+@media (max-width: 899px) {
+  .App {
+    font-size: 1em;
+  }
+}

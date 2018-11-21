@@ -1,0 +1,3 @@
+export const NOT_OCCUPIED = 'NOT_OCCUPIED';
+export const OCCUPIED_WHITE ='OCCUPIED_WHITE';
+export const OCCUPIED_BLACK ='OCCUPIED_BLACK';

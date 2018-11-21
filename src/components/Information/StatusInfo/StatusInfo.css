@@ -1,0 +1,15 @@
+.StatusInfo {
+    margin: 20px 0;
+    width: 100%;
+    padding: 16px;
+    text-align: left;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    box-sizing: border-box;
+}
+
+/* @media (max-width: 599px) {
+    .StatusInfo {
+        
+    }
+} */

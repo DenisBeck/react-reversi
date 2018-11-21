@@ -1,0 +1,8 @@
+.QuickStartDialog {
+    width: 100%;
+}
+
+.QuickStartDialog h3,
+.QuickStartDialog p {
+    margin: 0;
+}
