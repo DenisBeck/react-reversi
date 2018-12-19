@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 
-import Field from '../../components/Field/Field';
-import GameControl from '../../components/Field/GameControl/GameControl';
+import * as states from '../../components/FieldCell/states';
+import Field from '../Field/Field';
+import GameControl from '../../components/GameControl/GameControl';
 import Aux from '../../hoc/Auxx/Auxx';
 import PlayerInfo from '../../components/Information/PlayerInfo/PlayerInfo';
 import StatusInfo from '../../components/Information/StatusInfo/StatusInfo';
@@ -28,7 +29,7 @@ class GamePlay extends Component {
                     type: 'text',
                     placeholder: 'Аноним'
                 },
-                value: '',
+                value: 'Аноним',
                 elementTitle: 'Имя'
             },
             chipColor: {
@@ -41,7 +42,7 @@ class GamePlay extends Component {
                         {value: 'black', displayValue: 'Черный'}
                     ]
                 },
-                value: '',
+                value: 'Белый',
                 elementTitle: 'Цвет фишки'
             },
             level: {
@@ -54,14 +55,17 @@ class GamePlay extends Component {
                         {value: 'pro', displayValue: 'Специалист'}
                     ]
                 },
-                value: '',
+                value: 'Новичок',
                 elementTitle: 'Уровень'
             }
         },
-        statusText: 'Игра не началась',
+        statusText: {
+            text: 'Игра не началась',
+            withError: false
+        },
         currentResult: {
-            playerScore: 0,
-            opponentScore: 0
+            playerScore: 2,
+            opponentScore: 2
         },
         showStartModal: true
     }
@@ -73,9 +77,18 @@ class GamePlay extends Component {
     componentWillMount() {
         const cells = [];
         for(let i = 0; i < 8; i++) {
+            const innerCells = [];
             for(let j = 0; j < 8; j++) {
-                cells[8 * i + j] = {row: i + 1, column: j + 1};
+                innerCells.push({
+                    row: i + 1,
+                    column: j + 1,
+                    id: 'row' + i + 'column' + j,
+                    occupied: states.NOT_OCCUPIED,
+                    neighbors: null,
+                    error: false
+                });
             }
+            cells.push(innerCells);
         }
         this.setState({cells: cells});
     }
@@ -111,8 +124,44 @@ class GamePlay extends Component {
             ...this.state,
             players: updatedPlayers
         })
-        console.log(updatedPlayers);
         this.modalClosedHandler();
+    }
+
+    submitStatusTextHandler = (statusCode) => {
+        switch(statusCode) {
+            case 1: 
+                this.setState({
+                    ...this.state,
+                    statusText: {
+                        ...this.state.statusText,
+                        text: 'Недопустимый ход: поле уже занято!',
+                        withError: true
+                    }
+                });
+                break;
+            case 2: 
+                this.setState({
+                    ...this.state,
+                    statusText: {
+                        ...this.state.statusText,
+                        text: 'Ход сделан! Очередь противника...',
+                        withError: false
+                    }
+                });
+                break;
+            case 3: 
+                this.setState({
+                    ...this.state,
+                    statusText: {
+                        ...this.state.statusText,
+                        text: 'Недопустимый ход! Вокруг нет ни одной занятой ячейки',
+                        withError: true
+                    }
+                });
+                break;
+            default:
+                return;
+        }
     }
 
     render() {
@@ -129,7 +178,8 @@ class GamePlay extends Component {
                 </Modal>
                 <Field 
                     cells={this.state.cells}
-                    chipColor={this.state.players[0].chipColor} />
+                    chipColor={this.state.players[0].chipColor}
+                    submitStatusTextHandler={this.submitStatusTextHandler} />
                 <GameControl>
                     <PlayerInfo 
                         name={this.state.players[0].name}
@@ -138,7 +188,8 @@ class GamePlay extends Component {
                         level={this.state.players[0].level}
                         chipColor={this.state.players[0].chipColor} />
                     <StatusInfo 
-                        statusText={this.state.statusText} />
+                        statusText={this.state.statusText.text}
+                        withError={this.state.statusText.withError} />
                     <ResultInfo
                         playerScore={this.state.currentResult.playerScore}
                         opponentScore={this.state.currentResult.opponentScore} />

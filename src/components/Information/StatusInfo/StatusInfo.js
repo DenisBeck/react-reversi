@@ -4,7 +4,7 @@ import classes from './StatusInfo.css'
 
 const statusInfo = (props) => (
     <div className={classes.StatusInfo}>
-        <div>{props.statusText}</div>
+        <div style={{color: props.withError ? 'red' : 'black'}}>{props.statusText}</div>
     </div>
 );
 
