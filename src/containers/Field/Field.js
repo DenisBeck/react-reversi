@@ -85,7 +85,8 @@ class Field extends Component {
         this.updateCells();
     }
 
-    checkNeighbors(neighbors) {
+    getTrueNeighbors(neighbors) {
+        const trueNeighbors = [];
         for(let i = 0; i < neighbors.length; i++) {
             let tmpCell = {
                 ...neighbors[i].cell
@@ -101,14 +102,25 @@ class Field extends Component {
             if(tmpCellNext === null || tmpCellNext.occupied === states.NOT_OCCUPIED) {
                 continue;
             } else {
-                return true;
+                trueNeighbors.push(neighbors[i]);
             }
         }
-        return false;
+        return trueNeighbors;
     }
 
-    reverseChips = () => {
-
+    reverseChips = (trueNeighbors) => {
+        for(let i = 0; i < trueNeighbors.length; i++) {
+            let tmpCell = {
+                ...trueNeighbors[i].cell
+            };
+            let tmpCellNext = {
+                ...trueNeighbors[i].cell.neighbors[trueNeighbors[i].direction]
+            };
+            // while(tmpCell.occupied === tmpCellNext.occupied) {
+            //     tmpCell = tmpCellNext;
+            //     tmpCellNext = tmpCellNext.neighbors[neighbors[i].direction];
+            // }
+        }
     }
 
     stepChip = (color, cell) => {
@@ -130,7 +142,7 @@ class Field extends Component {
             if(reverseNeighbors.length === 0) {
                 this.props.submitStatusTextHandler(4);
             } else {
-                if(this.checkNeighbors(reverseNeighbors)) {
+                if(this.getTrueNeighbors(reverseNeighbors).length !== 0) {
                     const upgratedCells = this.state.fieldCells;
                     upgratedCells[cell.row - 1][cell.column - 1] = {
                         ...this.state.fieldCells[cell.row - 1][cell.column - 1],
@@ -140,7 +152,7 @@ class Field extends Component {
                     this.setState({
                         fieldCells: upgratedCells
                     });
-                    this.reverseChips();
+                    this.reverseChips(this.getTrueNeighbors(reverseNeighbors));
                     this.props.submitStatusTextHandler(2);
                 } else {
                     this.props.submitStatusTextHandler(5);
