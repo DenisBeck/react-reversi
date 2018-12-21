@@ -33,7 +33,7 @@ const fieldCell = (props) => {
 
     return (
         <div className={[classes.FieldCell, props.error ? classes.Error : ''].join(' ')}
-            onClick={props.clickCellHandler}>
+            onClick={() => props.clickCellHandler(props.currentCell)}>
             {chip}
         </div>
     );

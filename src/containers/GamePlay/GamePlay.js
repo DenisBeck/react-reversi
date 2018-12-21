@@ -159,6 +159,26 @@ class GamePlay extends Component {
                     }
                 });
                 break;
+            case 4: 
+                this.setState({
+                    ...this.state,
+                    statusText: {
+                        ...this.state.statusText,
+                        text: 'Недопустимый ход! Вокруг нет занятой ячейки другого цвета',
+                        withError: true
+                    }
+                });
+                break;
+            case 5: 
+                this.setState({
+                    ...this.state,
+                    statusText: {
+                        ...this.state.statusText,
+                        text: 'Недопустимый ход! В направлениях ячеек с другим цветом нет замыкающих ячеек нашего цвета',
+                        withError: true
+                    }
+                });
+                break;
             default:
                 return;
         }
