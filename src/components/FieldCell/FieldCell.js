@@ -4,7 +4,6 @@ import classes from './FieldCell.css';
 import * as states from './states';
 
 const fieldCell = (props) => {
-
     let chip = null;
     switch(props.occupied) {
         case states.OCCUPIED_WHITE:

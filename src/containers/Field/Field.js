@@ -1,88 +1,42 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 
 import classes from './Field.css';
 import FieldCell from '../../components/FieldCell/FieldCell';
 import * as states from '../../components/FieldCell/states';
+import * as actions from '../../store/actions';
 
 class Field extends Component {
     state = {
-        fieldCells: this.props.cells
+        playerStep: false
     }
 
-    updateCells = () => {
-        for(let i = 0; i < 8; i++) {
-            for(let j = 0; j < 8; j++) {
-                const upgratedCells = this.state.fieldCells;
-                
-                upgratedCells[i][j] = {
-                    ...this.state.fieldCells[i][j],
-                    neighbors: {
-                        up: (i > 0) ? this.state.fieldCells[i - 1][j] : null,
-                        upRight: (i > 0 && j < 7) ? this.state.fieldCells[i - 1][j + 1] : null,
-                        right: (j < 7) ? this.state.fieldCells[i][j + 1] : null,
-                        downRight: (i < 7 && j < 7) ? this.state.fieldCells[i + 1][j + 1] : null,
-                        down: (i < 7) ? this.state.fieldCells[i + 1][j] : null,
-                        downLeft: (i < 7 && j > 0) ? this.state.fieldCells[i + 1][j - 1] : null,
-                        left: (j > 0) ? this.state.fieldCells[i][j - 1] : null,
-                        upLeft: (i > 0 && j > 0) ? this.state.fieldCells[i - 1][j - 1] : null
-                    }
-                }
-                this.setState(() => ({
-                    fieldCells: upgratedCells
-                }))
-            }
-        }
+    componentDidUpdate = () => {
+        // if(this.props.fieldCells !== null) {
+        //     this.props.onSetStartChips(this.props.fieldCells);
+        //     for(let i = 0; i < 8; i++) {
+        //         this.props.onAddNeighbors(this.props.fieldCells);
+        //     }
+            
+        // }
     }
     
-    componentWillMount() {
-        const occupiedCells = this.state.fieldCells;
-        occupiedCells[3][3] = {
-            ...this.state.fieldCells[3][3],
-            occupied: states.OCCUPIED_BLACK,
-            error: true
-        };
-        occupiedCells[4][4] = {
-            ...this.state.fieldCells[4][4],
-            occupied: states.OCCUPIED_BLACK,
-            error: true
-        };
-        occupiedCells[3][4] = {
-            ...this.state.fieldCells[3][4],
-            occupied: states.OCCUPIED_WHITE,
-            error: true
-        };
-        occupiedCells[4][3] = {
-            ...this.state.fieldCells[4][3],
-            occupied: states.OCCUPIED_WHITE,
-            error: true
-        };
-        this.setState({fieldCells: occupiedCells});
-
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
-        this.updateCells();
+    componentDidMount() {
+        this.props.onInitFieldCells();
     }
-
-    
 
     clickCellHandler = (currentCell) => {
-        console.log(this.state);
-        console.log(currentCell);
         if(currentCell.occupied === states.NOT_OCCUPIED) {
             if(this.props.chipColor === 'Черный') {
                 this.stepChip(states.OCCUPIED_BLACK, currentCell);
+                this.opponentStep(states.OCCUPIED_WHITE)
             } else {
                 this.stepChip(states.OCCUPIED_WHITE, currentCell);
+                this.opponentStep(states.OCCUPIED_BLACK)
             }
         } else {
             this.props.submitStatusTextHandler(1);
         }
-        this.updateCells();
     }
 
     getTrueNeighbors(neighbors) {
@@ -94,11 +48,11 @@ class Field extends Component {
             let tmpCellNext = {
                 ...neighbors[i].cell.neighbors[neighbors[i].direction]
             };
+            console.log(tmpCell, tmpCellNext)
             while(tmpCell.occupied === tmpCellNext.occupied) {
                 tmpCell = tmpCellNext;
                 tmpCellNext = tmpCellNext.neighbors[neighbors[i].direction];
             }
-            console.log(tmpCell);
             if(tmpCellNext === null || tmpCellNext.occupied === states.NOT_OCCUPIED) {
                 continue;
             } else {
@@ -108,26 +62,15 @@ class Field extends Component {
         return trueNeighbors;
     }
 
-    reverseChips = (trueNeighbors) => {
-        for(let i = 0; i < trueNeighbors.length; i++) {
-            let tmpCell = {
-                ...trueNeighbors[i].cell
-            };
-            let tmpCellNext = {
-                ...trueNeighbors[i].cell.neighbors[trueNeighbors[i].direction]
-            };
-            // while(tmpCell.occupied === tmpCellNext.occupied) {
-            //     tmpCell = tmpCellNext;
-            //     tmpCellNext = tmpCellNext.neighbors[neighbors[i].direction];
-            // }
-        }
-    }
+    opponentStep = (color, cell) => {}
+
+    getRandomCell = () => {}
 
     stepChip = (color, cell) => {
         const neighbors =[];
         for(let key in cell.neighbors) {
             if(cell.neighbors[key] && (cell.neighbors[key].occupied !== states.NOT_OCCUPIED)) {
-            neighbors.push({cell: cell.neighbors[key], direction: key})
+                neighbors.push({cell: cell.neighbors[key], direction: key})
             }
         }
         if(neighbors.length === 0) {
@@ -142,17 +85,11 @@ class Field extends Component {
             if(reverseNeighbors.length === 0) {
                 this.props.submitStatusTextHandler(4);
             } else {
-                if(this.getTrueNeighbors(reverseNeighbors).length !== 0) {
-                    const upgratedCells = this.state.fieldCells;
-                    upgratedCells[cell.row - 1][cell.column - 1] = {
-                        ...this.state.fieldCells[cell.row - 1][cell.column - 1],
-                        occupied: color,
-                        error: true
-                    }
-                    this.setState({
-                        fieldCells: upgratedCells
-                    });
-                    this.reverseChips(this.getTrueNeighbors(reverseNeighbors));
+                const trueNeighbors = this.getTrueNeighbors(reverseNeighbors)
+                if(trueNeighbors.length !== 0) {
+                    this.setState({playerStep: true});
+                    this.props.onStepChip(this.props.fieldCells, cell, color);
+                    this.props.onReverseChips(this.props.fieldCells, trueNeighbors, color);
                     this.props.submitStatusTextHandler(2);
                 } else {
                     this.props.submitStatusTextHandler(5);
@@ -162,18 +99,22 @@ class Field extends Component {
     }
 
     render() {
-        const cells = this.props.cells.map((row, rowIndex) => (
-            row.map((cell, columnIndex) => (
-                <FieldCell 
-                    key={cell.id} 
-                    clickCellHandler={this.clickCellHandler}
-                    error={cell.error}
-                    currentCell={this.state.fieldCells[rowIndex][columnIndex]}
-                    occupied={cell.occupied}
-                    chipColor={this.props.chipColor}
-                    submitStatusTextHandler={this.props.submitStatusTextHandler} />
-            ))
-        ))
+        let cells = null;
+        if(this.props.fieldCells !== null) {
+            cells = this.props.fieldCells.map((row, rowIndex) => (
+                row.map((cell, columnIndex) => (
+                    <FieldCell 
+                        key={cell.id} 
+                        clickCellHandler={this.clickCellHandler}
+                        error={cell.error}
+                        currentCell={this.props.fieldCells[rowIndex][columnIndex]}
+                        occupied={cell.occupied}
+                        chipColor={this.props.chipColor}
+                        submitStatusTextHandler={this.props.submitStatusTextHandler} />
+                ))
+            ));
+        }
+        
 
         return (
             <div className={classes.Wrapper}>
@@ -185,4 +126,18 @@ class Field extends Component {
     }
 }
 
-export default Field;
+const mapStateToProps = state => {
+    return {
+        fieldCells: state.field.cells
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onInitFieldCells: (cells) => dispatch(actions.initFieldCells(cells)),
+        onStepChip: (cells, cell, color) => dispatch(actions.stepChip(cells, cell, color)),
+        onReverseChips: (cells, neighbors, color) => dispatch(actions.reverseChips(cells, neighbors, color))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Field);

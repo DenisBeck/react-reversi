@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 
 import * as states from '../../components/FieldCell/states';
 import Field from '../Field/Field';
@@ -10,9 +11,11 @@ import ResultInfo from '../../components/Information/ResultInfo/ResultInfo';
 import Modal from '../../components/UI/Modal/Modal';
 import QuickStartDialog from '../../components/QuickStartDialog/QuickStartDialog';
 
+import * as actions from '../../store/actions';
+
 class GamePlay extends Component {
     state = {
-        cells: null,
+        // cells: null,
         players: [
             {
                 name: 'Аноним',
@@ -74,24 +77,7 @@ class GamePlay extends Component {
         this.setState({showStartModal: false});
     }
 
-    componentWillMount() {
-        const cells = [];
-        for(let i = 0; i < 8; i++) {
-            const innerCells = [];
-            for(let j = 0; j < 8; j++) {
-                innerCells.push({
-                    row: i + 1,
-                    column: j + 1,
-                    id: 'row' + i + 'column' + j,
-                    occupied: states.NOT_OCCUPIED,
-                    neighbors: null,
-                    error: false
-                });
-            }
-            cells.push(innerCells);
-        }
-        this.setState({cells: cells});
-    }
+    
 
     inputChangedHandler = (event, element) => {
         const updatedValue = {
@@ -185,6 +171,7 @@ class GamePlay extends Component {
     }
 
     render() {
+        
         return (
             <Aux>
                 <Modal
@@ -197,7 +184,6 @@ class GamePlay extends Component {
                         submit={(event) => this.submitHandler(event)} />
                 </Modal>
                 <Field 
-                    cells={this.state.cells}
                     chipColor={this.state.players[0].chipColor}
                     submitStatusTextHandler={this.submitStatusTextHandler} />
                 <GameControl>
@@ -219,4 +205,16 @@ class GamePlay extends Component {
     }
 }
 
-export default GamePlay;
+const mapStateToProps = state => {
+    return {
+        fieldCells: state.gamePlay.cells
+    }
+    
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GamePlay);
