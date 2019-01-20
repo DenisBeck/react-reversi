@@ -48,7 +48,6 @@ class Field extends Component {
             let tmpCellNext = {
                 ...neighbors[i].cell.neighbors[neighbors[i].direction]
             };
-            console.log(tmpCell, tmpCellNext)
             while(tmpCell.occupied === tmpCellNext.occupied) {
                 tmpCell = tmpCellNext;
                 tmpCellNext = tmpCellNext.neighbors[neighbors[i].direction];
@@ -62,9 +61,33 @@ class Field extends Component {
         return trueNeighbors;
     }
 
-    opponentStep = (color, cell) => {}
+    opponentStep = (color) => {
+        const cell = this.getRandomCell(color);
+        console.log(cell);
+        this.props.onStepChip(this.props.fieldCells, cell.cell, color);
+        this.props.onReverseChips(this.props.fieldCells, cell.neighbors, color);
+    }
 
-    getRandomCell = () => {}
+    getRandomCell = (color) => {
+        const trueCells = [];
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                const neighbors = [];
+                const cell = this.props.fieldCells[i][j];
+                for(let key in cell.neighbors) {
+                    if(cell.occupied === states.NOT_OCCUPIED && cell.neighbors[key] && (cell.neighbors[key].occupied !== states.NOT_OCCUPIED)
+                        && (cell.neighbors[key].occupied !== color) ) {
+                        neighbors.push({cell: cell.neighbors[key], direction: key})
+                    }
+                }
+                if(neighbors.length !== 0 && this.getTrueNeighbors(neighbors).length !== 0) {
+                    trueCells.push(cell);
+                }
+            }
+        }
+        const trueCell = trueCells[Math.round(Math.random() * trueCells.length - 1)];
+        return {cell: trueCell, neighbors: trueCell.neighbors};
+    }
 
     stepChip = (color, cell) => {
         const neighbors =[];
