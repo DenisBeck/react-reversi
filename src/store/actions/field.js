@@ -32,7 +32,8 @@ export const initFieldCells = () => {
                     id: 'row' + i + 'column' + j,
                     occupied: states.OCCUPIED_BLACK,
                     neighbors: null,
-                    error: false
+                    error: false,
+                    reversed: false
                 }
             } else if((i === 4 && j === 3) || (i === 3 && j === 4)) {
                 innerCells[j] = {
@@ -41,7 +42,8 @@ export const initFieldCells = () => {
                     id: 'row' + i + 'column' + j,
                     occupied: states.OCCUPIED_WHITE,
                     neighbors: null,
-                    error: false
+                    error: false,
+                    reversed: false
                 }
             } else {
                 innerCells[j] = {
@@ -50,7 +52,8 @@ export const initFieldCells = () => {
                     id: 'row' + i + 'column' + j,
                     occupied: states.NOT_OCCUPIED,
                     neighbors: null,
-                    error: false
+                    error: false,
+                    reversed: false
                 }
             };
         }
@@ -86,6 +89,7 @@ export const reverseChips = (cells, neighbors, color) => {
         let tmpCell = neighbors[i].cell;
         while(tmpCell.occupied !== color) {
             upgratedCells[tmpCell.row - 1][tmpCell.column - 1].occupied = color;
+            upgratedCells[tmpCell.row - 1][tmpCell.column - 1].reversed = !upgratedCells[tmpCell.row - 1][tmpCell.column - 1].reversed;
             tmpCell = tmpCell.neighbors[neighbors[i].direction];
         }
     }

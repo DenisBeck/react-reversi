@@ -24,9 +24,9 @@
     perspective: 1000;
 }
 
-/* .ChipContainer:hover .Flipper {
+.Reverse .Flipper {
     transform: rotateY(180deg);
-} */
+}
 
 .ChipContainer,
 .Flipper,

@@ -7,22 +7,22 @@ const fieldCell = (props) => {
     let chip = null;
     switch(props.occupied) {
         case states.OCCUPIED_WHITE:
-            chip =  <div className={classes.ChipContainer}>
+            chip =  <div className={[classes.ChipContainer, props.reversed ? classes.Reverse : ''].join(' ')}>
                         <div className={classes.Flipper}>
                             <div className={classes.Front}
-                                style={{backgroundColor: 'white'}}></div>
+                                style={{backgroundColor: props.reversed ? 'black' : 'white'}}></div>
                             <div className={classes.Back}
-                                style={{backgroundColor: 'black'}}></div>
+                                style={{backgroundColor: props.reversed ? 'white' : 'black'}}></div>
                         </div>
                     </div>;
             break;
         case states.OCCUPIED_BLACK:
-            chip =  <div className={classes.ChipContainer}>
+            chip =  <div className={[classes.ChipContainer, props.reversed ? classes.Reverse : ''].join(' ')}>
                         <div className={classes.Flipper}>
                             <div className={classes.Front}
-                                style={{backgroundColor: 'black'}}></div>
+                                style={{backgroundColor: props.reversed ? 'white' : 'black'}}></div>
                             <div className={classes.Back}
-                                style={{backgroundColor: 'white'}}></div>
+                                style={{backgroundColor: props.reversed ? 'black' : 'white'}}></div>
                         </div>
                     </div>;
             break;
