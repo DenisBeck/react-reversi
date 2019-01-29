@@ -87,7 +87,7 @@ export const reverseChips = (cells, neighbors, color) => {
     const upgratedCells = cells;
     for(let i = 0; i < neighbors.length; i++) {
         let tmpCell = neighbors[i].cell;
-        while(tmpCell.occupied !== color) {
+        while(tmpCell && tmpCell.occupied !== color) {
             upgratedCells[tmpCell.row - 1][tmpCell.column - 1].occupied = color;
             upgratedCells[tmpCell.row - 1][tmpCell.column - 1].reversed = !upgratedCells[tmpCell.row - 1][tmpCell.column - 1].reversed;
             tmpCell = tmpCell.neighbors[neighbors[i].direction];

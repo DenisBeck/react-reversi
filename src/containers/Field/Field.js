@@ -15,17 +15,23 @@ class Field extends Component {
     componentDidMount() {
         this.props.onInitFieldCells();
     }
-    
+
+    componentDidUpdate() {
+        const opponentColor = this.props.chipColor === 'Черный' ? states.OCCUPIED_WHITE : states.OCCUPIED_BLACK;
+        if(this.state.playerStep) {
+            setTimeout(() => {
+                this.opponentStep(opponentColor);
+            }, 200)
+        }
+    }
 
     clickCellHandler = (currentCell) => {
         if(currentCell.occupied === states.NOT_OCCUPIED) {
             if(this.props.chipColor === 'Черный') {
                 this.stepChip(states.OCCUPIED_BLACK, currentCell);
-                this.opponentStep(states.OCCUPIED_WHITE);
                 
             } else {
                 this.stepChip(states.OCCUPIED_WHITE, currentCell);
-                setTimeout(() => {this.opponentStep(states.OCCUPIED_BLACK)}, 200) ;
                 
             }
         } else {
@@ -42,7 +48,14 @@ class Field extends Component {
             let tmpCellNext = {
                 ...neighbors[i].cell.neighbors[neighbors[i].direction]
             };
-            while(tmpCell.occupied === tmpCellNext.occupied) {
+            if (tmpCellNext === null) {
+                continue;
+            }
+            while(tmpCell && tmpCellNext && tmpCell.occupied === tmpCellNext.occupied) {
+                console.log(tmpCellNext);
+                if(tmpCellNext === null) {
+                    break;
+                }
                 tmpCell = tmpCellNext;
                 tmpCellNext = tmpCellNext.neighbors[neighbors[i].direction];
             }
@@ -57,13 +70,10 @@ class Field extends Component {
 
     opponentStep = (color) => {
         const cell = this.getRandomCell(color);
-        if(cell) {
-            setTimeout(() => {
-                this.props.onStepChip(this.props.fieldCells, cell.cell, color);
-                this.props.onReverseChips(this.props.fieldCells, cell.neighbors, color);
-            }, 200)
-            
-        }
+        console.log(cell);
+        this.props.onStepChip(this.props.fieldCells, cell.cell, color);
+        this.props.onReverseChips(this.props.fieldCells, cell.neighbors, color);
+        this.setState({playerStep: false});
         
     }
 
@@ -85,7 +95,9 @@ class Field extends Component {
                 }
             }
         }
-        const trueCell = trueCells[Math.round(Math.random() * trueCells.length - 1)];
+        const randomIndex = Math.floor(Math.random() * trueCells.length);
+        console.log(randomIndex);
+        const trueCell = trueCells[randomIndex];
         console.log(trueCells);
         return trueCell;
     }
